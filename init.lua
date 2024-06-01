@@ -577,6 +577,7 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
         tailwindcss = {},
+        biome = {},
 
         lua_ls = {
           -- cmd = {...},
@@ -658,7 +659,9 @@ require('lazy').setup({
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         typescript = { { 'biome' } },
+        typescriptreact = { { 'biome' } },
         javascript = { { 'biome' } },
+        javascriptreact = { { 'biome' } },
       },
     },
   },
@@ -699,6 +702,8 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'supermaven-inc/supermaven-nvim',
+      'luckasRanarison/tailwind-tools.nvim',
+      'onsails/lspkind-nvim',
     },
     config = function()
       -- See `:help cmp`
@@ -774,6 +779,15 @@ require('lazy').setup({
         },
       }
     end,
+    opts = function()
+      return {
+        formatting = {
+          format = require('lspkind').cmp_format {
+            before = require('tailwind-tools.cmp').lspkind_format,
+          },
+        },
+      }
+    end,
   },
 
   { -- You can easily change to a different colorscheme.
@@ -838,7 +852,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'tsx', 'typescript', 'javascript', 'yaml', 'json' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
