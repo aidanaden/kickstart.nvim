@@ -578,6 +578,7 @@ require('lazy').setup({
         -- tsserver = {},
         tailwindcss = {},
         biome = {},
+        astro = {},
 
         lua_ls = {
           -- cmd = {...},
@@ -608,6 +609,9 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'prettierd',
+        'prettier',
+        'eslint_d',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -662,6 +666,7 @@ require('lazy').setup({
         typescriptreact = { { 'biome' } },
         javascript = { { 'biome' } },
         javascriptreact = { { 'biome' } },
+        astro = { 'biome', 'eslint_d' },
       },
     },
   },
@@ -778,6 +783,13 @@ require('lazy').setup({
           { name = 'supermaven' },
         },
       }
+      -- setup dadbod
+      cmp.setup.filetype({ 'sql' }, {
+        sources = {
+          { name = 'vim-dadbod-completion' },
+          { name = 'buffer' },
+        },
+      })
     end,
     opts = function()
       return {
@@ -851,8 +863,27 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
+    dependencies = {
+      { 'windwp/nvim-ts-autotag' },
+    },
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'tsx', 'typescript', 'javascript', 'yaml', 'json' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        -- 'markdown',
+        'vim',
+        'vimdoc',
+        'tsx',
+        'typescript',
+        'javascript',
+        'astro',
+        'yaml',
+        'json',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -863,6 +894,8 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
+      autotag = { enable = true, filetypes = { 'html', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'tsx' } },
+      autopairs = { enable = true },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -871,6 +904,7 @@ require('lazy').setup({
       require('nvim-treesitter.install').prefer_git = true
       ---@diagnostic disable-next-line: missing-fields
       require('nvim-treesitter.configs').setup(opts)
+      require('nvim-ts-autotag').setup()
 
       -- There are additional nvim-treesitter modules that you can use to interact
       -- with nvim-treesitter. You should go explore a few and see what interests you:
