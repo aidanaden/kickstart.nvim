@@ -579,7 +579,8 @@ require('lazy').setup({
         tailwindcss = {},
         biome = {},
         astro = {},
-
+        yamlls = {},
+        ansiblels = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -612,6 +613,7 @@ require('lazy').setup({
         'prettierd',
         'prettier',
         'eslint_d',
+        'yamlfmt',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -667,6 +669,7 @@ require('lazy').setup({
         javascript = { { 'biome' } },
         javascriptreact = { { 'biome' } },
         astro = { 'biome', 'eslint_d' },
+        yaml = { 'yamlfmt' },
       },
     },
   },
