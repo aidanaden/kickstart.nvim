@@ -578,6 +578,7 @@ require('lazy').setup({
         -- tsserver = {},
         tailwindcss = {},
         biome = {},
+        eslint = {},
         astro = {},
         yamlls = {},
         ansiblels = {},
@@ -612,6 +613,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'prettierd',
         'prettier',
+        'eslint',
         'eslint_d',
         'yamlfmt',
       })
@@ -664,10 +666,10 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        typescript = { { 'biome' } },
-        typescriptreact = { { 'biome' } },
-        javascript = { { 'biome' } },
-        javascriptreact = { { 'biome' } },
+        typescript = { 'eslint', 'prettierd' },
+        typescriptreact = { 'eslint', 'prettierd' },
+        javascript = { 'eslint', 'prettierd' },
+        javascriptreact = { 'eslint', 'prettierd' },
         astro = { 'biome', 'eslint_d' },
         yaml = { 'yamlfmt' },
       },
