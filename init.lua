@@ -549,6 +549,19 @@ require('lazy').setup({
         end,
       })
 
+      -- auto format on save
+      local autocmd = vim.api.nvim_create_autocmd
+      local Format = vim.api.nvim_create_augroup('Format', { clear = true })
+      autocmd('BufWritePre', {
+        group = Format,
+        pattern = '*.ts,*.tsx,*.jsx,*.js',
+        callback = function(args)
+          vim.cmd 'TSToolsOrganizeImports sync'
+          vim.cmd 'TSToolsAddMissingImports sync'
+          require('conform').format { bufnr = args.buf }
+        end,
+      })
+
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
@@ -656,7 +669,7 @@ require('lazy').setup({
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 250,
+          timeout_ms = 500,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
