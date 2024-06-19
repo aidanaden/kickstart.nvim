@@ -631,6 +631,18 @@ require('lazy').setup({
             },
           },
         },
+        -- jsonls = {
+        --     settings = {
+        --       json = {
+        --       schemas = {
+        --       {
+        --         fileMatch = { 'package.json' },
+        --         url = 'https://json.schemastore.org/package.json',
+        --       },
+        --     },
+        --   },
+        -- },
+        jsonls = {},
         tailwindcss = {},
         biome = {},
         -- eslint = {},
