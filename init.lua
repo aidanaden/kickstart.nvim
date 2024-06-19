@@ -778,6 +778,7 @@ require('lazy').setup({
       'supermaven-inc/supermaven-nvim',
       'luckasRanarison/tailwind-tools.nvim',
       'onsails/lspkind-nvim',
+      'David-Kunz/cmp-npm',
     },
     config = function()
       -- See `:help cmp`
@@ -850,6 +851,7 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'supermaven' },
+          { name = 'npm' },
         },
       }
       -- setup dadbod
