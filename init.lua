@@ -255,6 +255,7 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      current_line_blame = true,
     },
   },
 
@@ -423,6 +424,12 @@ require('lazy').setup({
       -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
+
+      -- Autoformatting
+      'stevearc/conform.nvim',
+
+      -- Typescript
+      'jose-elias-alvarez/typescript.nvim',
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -540,12 +547,10 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          -- if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-          --   map('<leader>th', function()
-          --     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-          --   end, '[T]oggle Inlay [H]ints')
-          -- end
-          vim.lsp.inlay_hint.enable(true)
+          if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+            vim.lsp.inlay_hint.enable(true)
+          end
+          --
         end,
       })
 
@@ -556,9 +561,10 @@ require('lazy').setup({
         group = Format,
         pattern = '*.ts,*.tsx,*.jsx,*.js',
         callback = function(args)
-          vim.cmd 'TSToolsOrganizeImports sync'
-          vim.cmd 'TSToolsAddMissingImports sync'
-          require('conform').format { bufnr = args.buf }
+          -- multiple commands can't be run in succession even with sync = true, see https://github.com/jose-elias-alvarez/typescript.nvim/issues/75
+          -- require('typescript').actions.organizeImports { sync = true }
+          require('typescript').actions.removeUnused { sync = true }
+          require('conform').format { bufnr = args.buf, sync = true }
         end,
       })
 
@@ -589,13 +595,47 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
+        -- Probably want to disable formatting for this lang server
+        tsserver = {
+          server_capabilities = {
+            documentFormattingProvider = false,
+          },
+          on_attach = function(client, bufnr)
+            -- your other on_attach stuff here if you have any
+            -- ...
+            vim.lsp.inlay_hint.enable(true)
+          end,
+          settings = {
+            -- specify some or all of the following settings if you want to adjust the default behavior
+            javascript = {
+              inlayHints = {
+                includeInlayEnumMemberValueHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all';
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayVariableTypeHints = true,
+              },
+            },
+            typescript = {
+              inlayHints = {
+                includeInlayEnumMemberValueHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all';
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayVariableTypeHints = true,
+              },
+            },
+          },
+        },
         tailwindcss = {},
         biome = {},
-        eslint = {},
+        -- eslint = {},
         astro = {},
         yamlls = {},
-        ansiblels = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -611,7 +651,6 @@ require('lazy').setup({
           },
         },
       }
-
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
       --  other tools, you can run
@@ -628,7 +667,6 @@ require('lazy').setup({
         'prettierd',
         'prettier',
         'eslint',
-        'eslint_d',
         'yamlfmt',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -743,7 +781,7 @@ require('lazy').setup({
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
 
-        -- For an understanding of why these mappings were
+        -- For an understanding of why these mappings wereconfor
         -- chosen, you will need to read `:help ins-completion`
         --
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
@@ -896,9 +934,9 @@ require('lazy').setup({
         -- 'markdown',
         'vim',
         'vimdoc',
-        'tsx',
-        'typescript',
-        'javascript',
+        -- 'tsx',
+        -- 'typescript',
+        -- 'javascript',
         'astro',
         'yaml',
         'json',
