@@ -154,6 +154,9 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Set tab width to 4 by default
+vim.opt.tabstop = 4
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -354,12 +357,20 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          file_ignore_patterns = {
+            'node_modules',
+            'dist',
+          },
+          -- mappings = {
+          --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          -- },
+        },
+        pickers = {
+          find_files = {
+            hidden = true,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -586,6 +597,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
+        zls = {},
         gopls = {},
         pyright = {},
         rust_analyzer = {},
@@ -642,6 +654,12 @@ require('lazy').setup({
         --     },
         --   },
         -- },
+        unocss = {
+          filetypes = {
+            'astro',
+            'css',
+          },
+        },
         jsonls = {},
         tailwindcss = {},
         biome = {},
@@ -734,8 +752,16 @@ require('lazy').setup({
         typescriptreact = { 'eslint', 'prettierd' },
         javascript = { 'eslint', 'prettierd' },
         javascriptreact = { 'eslint', 'prettierd' },
-        astro = { 'biome' },
+        astro = { 'eslint', 'prettierd' },
         yaml = { 'yamlfmt' },
+      },
+      formatters = {
+        rustfmt = {
+          options = {
+            -- The default edition of Rust to use when no Cargo.toml file is found
+            default_edition = '2021',
+          },
+        },
       },
     },
   },
