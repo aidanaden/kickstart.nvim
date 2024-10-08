@@ -283,20 +283,31 @@ require('lazy').setup({
     config = function() -- This is the function that runs, AFTER loading
       require('which-key').setup()
 
+      -- -- Document existing key chains
+      -- require('which-key').register {
+      --   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
+      --   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+      --   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
+      --   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+      --   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+      --   ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
+      --   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+      -- }
+
       -- Document existing key chains
-      require('which-key').register {
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
-        ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
-        ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+      require('which-key').add {
+        { '<leader>c', desc = '[C]ode' },
+        { '<leader>d', desc = '[D]ocument' },
+        { '<leader>r', desc = '[R]ename' },
+        { '<leader>s', desc = '[S]earch' },
+        { '<leader>w', desc = '[W]orkspace' },
+        { '<leader>t', desc = '[T]oggle' },
+        { '<leader>h', desc = 'Git [H]unk', mode = { 'n', 'v' } },
       }
-      -- visual mode
-      require('which-key').register({
-        ['<leader>h'] = { 'Git [H]unk' },
-      }, { mode = 'v' })
+      -- -- visual mode
+      -- require('which-key').register({
+      --   ['<leader>h'] = { 'Git [H]unk' },
+      -- }, { mode = 'v' })
     end,
   },
 
@@ -596,11 +607,22 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        -- zig
         zls = {},
+        -- golang
         gopls = {},
-        pyright = {},
+        -- python
+        ruff = {},
+        -- rust
         rust_analyzer = {},
+        marksman = {},
+        jsonls = {},
+        tailwindcss = {},
+        biome = {},
+        astro = {},
+        svelte = {},
+        yamlls = {},
+
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -608,7 +630,7 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- Probably want to disable formatting for this lang server
-        tsserver = {
+        ts_ls = {
           server_capabilities = {
             documentFormattingProvider = false,
           },
@@ -618,6 +640,7 @@ require('lazy').setup({
             vim.lsp.inlay_hint.enable(true)
           end,
           settings = {
+            maxTsServerMemory = 12288,
             -- specify some or all of the following settings if you want to adjust the default behavior
             javascript = {
               inlayHints = {
@@ -643,29 +666,7 @@ require('lazy').setup({
             },
           },
         },
-        -- jsonls = {
-        --     settings = {
-        --       json = {
-        --       schemas = {
-        --       {
-        --         fileMatch = { 'package.json' },
-        --         url = 'https://json.schemastore.org/package.json',
-        --       },
-        --     },
-        --   },
-        -- },
-        unocss = {
-          filetypes = {
-            'astro',
-            'css',
-          },
-        },
-        jsonls = {},
-        tailwindcss = {},
-        biome = {},
-        -- eslint = {},
-        astro = {},
-        yamlls = {},
+
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -699,7 +700,21 @@ require('lazy').setup({
         'eslint',
         'yamlfmt',
       })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      require('mason-tool-installer').setup {
+        ensure_installed = ensure_installed,
+
+        -- if set to true this will check each tool for updates. If updates
+        -- are available the tool will be updated. This setting does not
+        -- affect :MasonToolsUpdate or :MasonToolsInstall.
+        -- Default: false
+        auto_update = false,
+
+        -- automatically install / update on startup. If set to false nothing
+        -- will happen on startup. You can use :MasonToolsInstall or
+        -- :MasonToolsUpdate to install tools and check for updates.
+        -- Default: true
+        run_on_start = true,
+      }
 
       require('mason-lspconfig').setup {
         handlers = {
@@ -744,16 +759,21 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'isort', 'black' },
+        python = { 'ruff' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
+        markdown = { 'prettierd' },
+        mdx = { 'prettierd' },
         typescript = { 'eslint', 'prettierd' },
         typescriptreact = { 'eslint', 'prettierd' },
         javascript = { 'eslint', 'prettierd' },
         javascriptreact = { 'eslint', 'prettierd' },
+        -- astro = { 'biome' },
         astro = { 'eslint', 'prettierd' },
         yaml = { 'yamlfmt' },
+        -- zig = { 'zigfmt' },
+        nix = { 'alejandra' },
       },
       formatters = {
         rustfmt = {
