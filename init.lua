@@ -372,6 +372,8 @@ require('lazy').setup({
           file_ignore_patterns = {
             'node_modules',
             'dist',
+            'yarn.lock',
+            'pnpm%-lock.yaml',
           },
           -- mappings = {
           --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
